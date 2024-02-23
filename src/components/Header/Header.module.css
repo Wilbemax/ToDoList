@@ -1,0 +1,12 @@
+.header {
+	display: flex;
+	justify-content: space-between;
+	padding: 0.5rem 2rem;
+	background: #8ecae6;
+}
+
+.title {
+	font-family: 'Monoton';
+	font-size: 36px;
+	color: #de1f1f;
+}
