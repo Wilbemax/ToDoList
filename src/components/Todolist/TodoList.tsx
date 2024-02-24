@@ -1,4 +1,4 @@
-import React, { useState, ChangeEvent, useEffect } from 'react';
+import React, { useState, ChangeEvent, useEffect, useMemo, useCallback } from 'react';
 import { Button, TextField } from '@mui/material';
 import classes from "./Todolist.module.css";
 import TodoItem from './TodoItem/TodoItem';
@@ -22,19 +22,19 @@ const TodoList: React.FC = () => {
     const [disabled, setDisabled] = useState<boolean>(false);
     const [type, setType] = useState<TodoTypes>("all");
 
-    const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-        setTodo({ value: e.target.value });
+    const handleChange = useCallback(({ target: { value } }: ChangeEvent<HTMLInputElement>) => {
+        setTodo({ value });
+        setDisabled(value === "");
+        setStatus(value !== "" ? { value: "primary", message: "" } : { value: "error", message: "Поле не должно быть пустое" });
+    }, []);
 
-        setDisabled(e.target.value === "");
 
-        setStatus(e.target.value !== "" ? { value: "primary", message: "" } : { value: "error", message: "Поле не должно быть пустое" })
-    };
 
-    const handleCheck = (id: number) => {
+    const handleCheck = useCallback((id: number) => {
         setTodos(todos.map(todo => todo.id === id ? { ...todo, isDone: !todo.isDone } : todo));
-    };
+    }, [todos]);
 
-    const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    const handleClick = useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
         setDisabled(true);
         if (todo.value !== '') {
@@ -42,13 +42,21 @@ const TodoList: React.FC = () => {
             setTodo({ value: '' });
             setStatus({ value: 'success', message: "" });
             setDisabled(false);
-
-            return;
         } else {
             setStatus({ value: "error", message: "поле не должно быть пустым" });
-            return;
         }
-    };
+    }, [todos, todo]);
+
+    const handleDelete = useCallback((id: number) => {
+        const updatedTodos = todos.filter(item => item.id !== id);
+        setTodos(updatedTodos);
+    }, [todos]);
+
+    const chooseType = useCallback((type: TodoTypes) => {
+        setType(type);
+    }, []);
+
+
 
     useEffect(() => {
         let interval: number | null = null;
@@ -66,53 +74,49 @@ const TodoList: React.FC = () => {
         };
     }, [status.value]);
 
-    const handleDelete = (id: number) => {
-        const updatedTodos = todos.filter(item => item.id !== id);
-        setTodos(updatedTodos);
-    };
 
-    const chooseType = (type: TodoTypes) => {
-        setType(type);
-    };
+    const readyTodo = useMemo(() => {
+        switch (type) {
+            case "complited":
+                return todos.filter(todo => todo.isDone === true);
+            case "active":
+                return todos.filter(todo => todo.isDone === false);
+            default:
+                return todos;
+        }
+    }, [todos, type]);
 
-    let readyTodo = todos;
-    if (type === "complited") {
-        readyTodo = todos.filter(todo => todo.isDone === true);
-    }
-    if (type === "active") {
-        readyTodo = todos.filter(todo => todo.isDone === false);
-    }
 
     return (
-       
 
-            <div className={classes.list}>
-                    <TextField
-                        required
-                        id="outlined-required"
-                        label={status.value === "primary" ? "enter to do" : (status.value === "success" ? "Done" : "Error")}
-                        color={status.value}
-                        error={status.value === "error"}
-                        value={todo.value}
-                        margin='normal'
-                        helperText={status.message}
 
-                        onChange={handleChange}
-                    />
-                    <Button variant="outlined" color={status.value === "error" && status.message === "поле не должно быть пустым" ? "error" : (status.value === "success" ? "success" : undefined)} disabled={disabled} onClick={handleClick}>add new todo</Button>
-                <ul className={classes.item}>
-                    {readyTodo.map(todo => (
-                        <TodoItem key={todo.id} todo={todo} onCheck={handleCheck} onDelete={handleDelete} />
-                    ))}
-                </ul>
-                <div className={classes.buttons}>
-                    <FilterButton type="all" isActive={type === 'all'} onClick={chooseType} />
-                    <FilterButton type="complited" isActive={type === 'complited'} onClick={chooseType} />
-                    <FilterButton type="active" isActive={type === 'active'} onClick={chooseType} />
-                </div>
+        <div className={classes.list}>
+            <TextField
+                required
+                id="outlined-required"
+                label={status.value === "primary" ? "enter to do" : (status.value === "success" ? "Done" : "Error")}
+                color={status.value}
+                error={status.value === "error"}
+                value={todo.value}
+                margin='normal'
+                helperText={status.message}
 
+                onChange={handleChange}
+            />
+            <Button variant="outlined" color={status.value === "error" && status.message === "поле не должно быть пустым" ? "error" : (status.value === "success" ? "success" : undefined)} disabled={disabled} onClick={handleClick}>add new todo</Button>
+            <ul className={classes.item}>
+                {readyTodo.map(todo => (
+                    <TodoItem key={todo.id} todo={todo} onCheck={handleCheck} onDelete={handleDelete} />
+                ))}
+            </ul>
+            <div className={classes.buttons}>
+                <FilterButton type="all" isActive={type === 'all'} onClick={chooseType} />
+                <FilterButton type="complited" isActive={type === 'complited'} onClick={chooseType} />
+                <FilterButton type="active" isActive={type === 'active'} onClick={chooseType} />
             </div>
-      
+
+        </div>
+
     );
 };
 
