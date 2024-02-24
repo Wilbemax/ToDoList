@@ -1,0 +1,16 @@
+.item {
+	display: flex;
+	align-items: center;
+	font-size: 18px;
+	justify-content: space-between;
+}
+.typography {
+	display: flex;
+	min-width: 5rem;
+	align-items: center;
+	text-wrap: nowrap;
+}
+.text {
+	max-width: 230px;
+	overflow-x: hidden;
+}

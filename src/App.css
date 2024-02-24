@@ -83,8 +83,10 @@ h6 {
 	font-size: inherit;
 	font-weight: 400;
 }
-
-.continer {
+body {
+	height: 100vh;
+}
+.container {
 	max-width: 1720px;
 	margin: 0 auto;
 }

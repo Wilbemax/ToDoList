@@ -1,0 +1,17 @@
+.list {
+	display: flex;
+	flex-direction: column;
+	/* justify-content: space-between; */
+	max-width: 300px;
+
+	min-height: 250px;
+}
+.buttons {
+	display: flex;
+
+	justify-content: space-between;
+}
+.item {
+	min-height: 100px;
+	margin-top: 1rem;
+}

@@ -9,17 +9,19 @@ export default function Header() {
     const { mode, toggleColorMode } = useThemeContext();
 
     return (
-        <header className={classes.header}>
-            <div className="continer">
+        <header className={classes.bg}>
+           <div className='container'>
+                <div className={classes.header}>
 
-
-                <p className={classes.title}>TO-DO-LIST made by Wilbemax</p>
-                <div className={classes.button}>
-                    <span>{mode}  mode</span>
-                    <IconButton sx={{ ml: 1 }} onClick={toggleColorMode} color="inherit">
-                        {mode === "dark" ? <Brightness7Icon /> : <Brightness4Icon />}
-                    </IconButton>
-                </div> </div>
+                    <p className={classes.title}>TO-DO-LIST made by Wilbemax</p>
+                    <div className={classes.button}>
+                        <span>{mode}  mode</span>
+                        <IconButton sx={{ ml: 1 }} onClick={toggleColorMode} color="inherit">
+                            {mode === "dark" ? <Brightness7Icon /> : <Brightness4Icon />}
+                        </IconButton>
+                    </div>
+                </div>
+            </div>
         </header>
 
     );
