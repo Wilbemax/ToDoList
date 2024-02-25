@@ -5,18 +5,20 @@ import TodoItem from './TodoItem/TodoItem';
 import FilterButton from '../features/Button/FilterButton';
 
 
+
 interface Todo {
     value: string;
     isDone: boolean;
     id: number;
 }
+type TodoListProps = {
+    title: string;
+}
 
 export type TodoTypes = "all" | "complited" | "active";
 
-const TodoList: React.FC = () => {
-    const [todos, setTodos] = useState<Todo[]>([
-        { value: "react", isDone: false, id: Date.now() }
-    ]);
+const TodoList: React.FC<TodoListProps> = ({ title }) => {
+    const [todos, setTodos] = useState<Todo[]>([]);
     const [todo, setTodo] = useState<{ value: string }>({ value: '' });
     const [status, setStatus] = useState<{ value: "error" | "primary" | "success", message: string }>({ value: "primary", message: "" });
     const [disabled, setDisabled] = useState<boolean>(false);
@@ -43,7 +45,7 @@ const TodoList: React.FC = () => {
             setStatus({ value: 'success', message: "" });
             setDisabled(false);
         } else {
-            setStatus({ value: "error", message: "поле не должно быть пустым" });
+            setStatus({ value: "error", message: "the field should not be empty" });
         }
     }, [todos, todo]);
 
@@ -91,6 +93,7 @@ const TodoList: React.FC = () => {
 
 
         <div className={classes.list}>
+            <p className={classes.title}>{title}</p>
             <TextField
                 required
                 id="outlined-required"
@@ -103,12 +106,15 @@ const TodoList: React.FC = () => {
 
                 onChange={handleChange}
             />
-            <Button variant="outlined" color={status.value === "error" && status.message === "поле не должно быть пустым" ? "error" : (status.value === "success" ? "success" : undefined)} disabled={disabled} onClick={handleClick}>add new todo</Button>
-            <ul className={classes.item}>
+            <Button variant="outlined" color={status.value === "error" && status.message === "the field should not be empty" ? "error" : (status.value === "success" ? "success" : undefined)} disabled={disabled} onClick={handleClick}>add new task</Button>
+
+            {readyTodo.length > 0 ? <ul className={classes.item}>
                 {readyTodo.map(todo => (
                     <TodoItem key={todo.id} todo={todo} onCheck={handleCheck} onDelete={handleDelete} />
                 ))}
-            </ul>
+            </ul> : <p className={classes.item}>Add a task to see them here</p>}
+
+
             <div className={classes.buttons}>
                 <FilterButton type="all" isActive={type === 'all'} onClick={chooseType} />
                 <FilterButton type="complited" isActive={type === 'complited'} onClick={chooseType} />
