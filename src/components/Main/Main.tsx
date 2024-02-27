@@ -2,10 +2,11 @@ import TodoList from "../Todolist/TodoList";
 import classes from './Main.module.css'
 import AddTask from './AddTask/AddTask'
 import { ChangeEvent, useCallback, useEffect, useState } from "react";
+import { v4 as uuidv4 } from 'uuid';
 
 export interface List {
     value: string;
-    id: number;
+    id: string;
 }
 
 export default function Main() {
@@ -26,7 +27,7 @@ export default function Main() {
         e.preventDefault();
         setDisabled(true);
         if (title !== '') {
-            setTasks([...tasks, { value: title, id: Date.now() }]);
+            setTasks([...tasks, { value: title, id: uuidv4() }]);
             setTitle('');
             setStatus({ value: 'success', message: "" });
             setDisabled(false);
@@ -50,6 +51,16 @@ export default function Main() {
             }
         };
     }, [status.value]);
+
+    // type editableTitleType = {
+    //     value: string,
+    //     id: string,
+    //     isDone: boolean
+    // }
+
+    // const editableTitle = (item: editableTitleType) => {
+    //     const 
+    // }
     return (
         <section className={classes.main}>
 
@@ -59,12 +70,9 @@ export default function Main() {
                     <AddTask title={title} handlChanged={handlChanged} handlClick={handlClick} disabled={disabled} status={status} />
                 </div>
                 <div className={classes.list}>
-                    {tasks.length > 0 ? tasks.map((item) => <><TodoList key={item.id} title={item.value} /></>) : <p className={classes.title}>You don't have a single task</p>}
+                    {tasks.length > 0 ? tasks.map((item) => <><TodoList key={item.id} id={item.id} title={item.value} /></>) : <p className={classes.title}>You don't have a single task</p>}
                 </div>
-
-
             </div>
-
 
         </section>
     )

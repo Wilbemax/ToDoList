@@ -3,21 +3,24 @@ import { Button, TextField } from '@mui/material';
 import classes from "./Todolist.module.css";
 import TodoItem from './TodoItem/TodoItem';
 import FilterButton from '../features/Button/FilterButton';
+import ControlInput from '../../widgets/ControlInput/ControlInput';
+import { v4 as uuidv4 } from 'uuid';
 
 
 
 interface Todo {
     value: string;
     isDone: boolean;
-    id: number;
+    id: string;
 }
 type TodoListProps = {
     title: string;
+    id: string;
 }
 
 export type TodoTypes = "all" | "complited" | "active";
 
-const TodoList: React.FC<TodoListProps> = ({ title }) => {
+const TodoList: React.FC<TodoListProps> = ({ title, id }) => {
     const [todos, setTodos] = useState<Todo[]>([]);
     const [todo, setTodo] = useState<{ value: string }>({ value: '' });
     const [status, setStatus] = useState<{ value: "error" | "primary" | "success", message: string }>({ value: "primary", message: "" });
@@ -32,7 +35,7 @@ const TodoList: React.FC<TodoListProps> = ({ title }) => {
 
 
 
-    const handleCheck = useCallback((id: number) => {
+    const handleCheck = useCallback((id: string) => {
         setTodos(todos.map(todo => todo.id === id ? { ...todo, isDone: !todo.isDone } : todo));
     }, [todos]);
 
@@ -40,7 +43,7 @@ const TodoList: React.FC<TodoListProps> = ({ title }) => {
         e.preventDefault();
         setDisabled(true);
         if (todo.value !== '') {
-            setTodos([...todos, { ...todo, id: Date.now(), isDone: false }]);
+            setTodos([...todos, { ...todo, id: uuidv4(), isDone: false }]);
             setTodo({ value: '' });
             setStatus({ value: 'success', message: "" });
             setDisabled(false);
@@ -49,7 +52,7 @@ const TodoList: React.FC<TodoListProps> = ({ title }) => {
         }
     }, [todos, todo]);
 
-    const handleDelete = useCallback((id: number) => {
+    const handleDelete = useCallback((id: string) => {
         const updatedTodos = todos.filter(item => item.id !== id);
         setTodos(updatedTodos);
     }, [todos]);
@@ -58,7 +61,7 @@ const TodoList: React.FC<TodoListProps> = ({ title }) => {
         setType(type);
     }, []);
 
-
+    
 
     useEffect(() => {
         let interval: number | null = null;
@@ -88,12 +91,15 @@ const TodoList: React.FC<TodoListProps> = ({ title }) => {
         }
     }, [todos, type]);
 
+    const handleChangeTitle = (value: string) => {
+        
+    }
 
     return (
 
 
         <div className={classes.list}>
-            <p className={classes.title}>{title}</p>
+            <ControlInput handleChangeTitle={handleChangeTitle} title={title}/>
             <TextField
                 required
                 id="outlined-required"
