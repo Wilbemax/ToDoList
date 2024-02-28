@@ -7,10 +7,15 @@
 .typography {
 	display: flex;
 	min-width: 5rem;
+	font-size: 20px;
 	align-items: center;
 	text-wrap: nowrap;
 }
 .text {
 	max-width: 230px;
 	overflow-x: hidden;
+}
+.textDone {
+	color: rgba(74, 74, 74, 0.468);
+	text-decoration: line-through;
 }

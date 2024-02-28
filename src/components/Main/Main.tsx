@@ -20,7 +20,7 @@ export default function Main() {
     const handlChanged = useCallback(({ target: { value } }: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         setTitle(value)
         setDisabled(value === '')
-        setStatus(value !== "" ? { value: "primary", message: "" } : { value: "error", message: "Поле не должно быть пустое" });
+        setStatus(value !== "" ? { value: "primary", message: "" } : { value: "error", message: "the field should not be empty" });
     }, [])
 
     const handlClick = useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
@@ -52,15 +52,28 @@ export default function Main() {
         };
     }, [status.value]);
 
-    // type editableTitleType = {
-    //     value: string,
-    //     id: string,
-    //     isDone: boolean
-    // }
+    function handlChangeTitle(title: string, id: string) {
+        const tasksIndex = tasks.findIndex(task => task.id === id);
 
-    // const editableTitle = (item: editableTitleType) => {
-    //     const 
-    // }
+        if (tasksIndex !== -1) {
+            const updateArr = tasks.map((task, index) => {
+                if (index === tasksIndex) {
+                    return { ...task, value: title }
+                }
+                return task
+
+            })
+            setTasks(updateArr)
+
+            return
+        } else null
+
+
+
+    }
+
+  
+
     return (
         <section className={classes.main}>
 
@@ -70,7 +83,7 @@ export default function Main() {
                     <AddTask title={title} handlChanged={handlChanged} handlClick={handlClick} disabled={disabled} status={status} />
                 </div>
                 <div className={classes.list}>
-                    {tasks.length > 0 ? tasks.map((item) => <><TodoList key={item.id} id={item.id} title={item.value} /></>) : <p className={classes.title}>You don't have a single task</p>}
+                    {tasks.length > 0 ? tasks.map((item) => <TodoList key={item.id} handlChangeTitle={handlChangeTitle} id={item.id} title={item.value} />) : <p className={classes.title}>You don't have a single task</p>}
                 </div>
             </div>
 

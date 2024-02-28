@@ -16,11 +16,12 @@ interface Todo {
 type TodoListProps = {
     title: string;
     id: string;
+    handlChangeTitle: (title: string, id: string) => void;
 }
 
 export type TodoTypes = "all" | "complited" | "active";
 
-const TodoList: React.FC<TodoListProps> = ({ title, id }) => {
+const TodoList: React.FC<TodoListProps> = ({ title, id, handlChangeTitle }) => {
     const [todos, setTodos] = useState<Todo[]>([]);
     const [todo, setTodo] = useState<{ value: string }>({ value: '' });
     const [status, setStatus] = useState<{ value: "error" | "primary" | "success", message: string }>({ value: "primary", message: "" });
@@ -61,7 +62,7 @@ const TodoList: React.FC<TodoListProps> = ({ title, id }) => {
         setType(type);
     }, []);
 
-    
+
 
     useEffect(() => {
         let interval: number | null = null;
@@ -91,15 +92,35 @@ const TodoList: React.FC<TodoListProps> = ({ title, id }) => {
         }
     }, [todos, type]);
 
-    const handleChangeTitle = (value: string) => {
-        
+    function handlChangeTask(title: string, id: string) {
+        const tasksIndex = todos.findIndex(t => t.id === id);
+
+        if (tasksIndex !== -1) {
+            const updateArr = todos.map((t, index) => {
+                if (index === tasksIndex) {
+                    return { ...t, value: title }
+                }
+                return t
+
+            })
+            setTodos(updateArr)
+
+            return
+        } else null
+
+
+
     }
+    
+    
 
     return (
 
 
         <div className={classes.list}>
-            <ControlInput handleChangeTitle={handleChangeTitle} title={title}/>
+            <div className={classes.title}>
+                <ControlInput taskId={id} handlChangeTitle={handlChangeTitle} title={title} />
+            </div>
             <TextField
                 required
                 id="outlined-required"
@@ -116,7 +137,7 @@ const TodoList: React.FC<TodoListProps> = ({ title, id }) => {
 
             {readyTodo.length > 0 ? <ul className={classes.item}>
                 {readyTodo.map(todo => (
-                    <TodoItem key={todo.id} todo={todo} onCheck={handleCheck} onDelete={handleDelete} />
+                    <TodoItem key={todo.id} handlChangeTitle={handlChangeTask} todo={todo} onCheck={handleCheck} onDelete={handleDelete} />
                 ))}
             </ul> : <p className={classes.item}>Add a task to see them here</p>}
 
